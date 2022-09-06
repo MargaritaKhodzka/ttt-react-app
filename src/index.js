@@ -4,33 +4,44 @@ import './index.css';
 
 // React.Component subclass
 class Square extends React.Component {
-    // React components can have state by setting this.state in their constructors
-    constructor(props) {
-        // In JavaScript classes, super should be called when defining the constructor of a subclass
-        super(props);
-        // initialize the state
-        this.state = {
-            value: null,
-        };
-    }
-
     // render method returns a description of what you want to see on the screen
     render() {
       return (
         // display the current state’s value when clicked
         <button 
             className="square" 
-            onClick={() => this.setState({value: 'X'})}
+            onClick={() => this.props.onClick({value: 'X'})}
         >
-          {this.state.value}
+          {this.props.value}
         </button>
       );
     }
 }
   
 class Board extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            squares: Array(9).fill(null),
+        };
+    }
+
+    handleClick(i) {
+        // call .slice() to create a copy of the squares array to modify instead of modifying the existing array
+        const squares = this.state.squares.slice();
+        squares[i] = 'X';
+        this.setState({squares: squares});
+    }
+
     renderSquare(i) {
-        return <Square value={i} />;
+        // added parentheses so that JS doesn’t insert a semicolon after return and break the code
+        return (
+            // passing down two props from Board to Square
+            <Square
+                value={this.state.squares[i]}
+                onClick={() => this.handleClick(i)}
+            />
+        );
     }
 
     render() {
